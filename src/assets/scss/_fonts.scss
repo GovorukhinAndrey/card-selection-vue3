@@ -1,0 +1,9 @@
+@use 'utils/mixins/font' as mixin;
+
+@include mixin.font('Roboto', '/static/fonts/roboto-regular', 400, 'normal', '32');
+@include mixin.font('Roboto', '/static/fonts/roboto-bold', 700, 'normal', '32');
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
