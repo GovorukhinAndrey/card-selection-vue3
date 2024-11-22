@@ -1,47 +1,76 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
+  <main class="wrapper">
+    <AppItemsWrapper :data="state.userItems" resultSide='left' :isLoading="state.isLoadingUserItems" />
+    <AppItemsWrapper :data="state.items" resultSide='right' :isLoading="state.isLoadingItems" :choiceLimitation="1" />
   </main>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+
+<script setup lang="ts">
+import { onMounted, reactive } from 'vue';
+import AppItemsWrapper from '@/components/AppItemsWrapper.vue';
+import type { IBasicData } from '@/interfaces/data.interface';
+import { ItemsApi } from '@/services/items.service';
+import { UserItemsApi } from '@/services/user-items.service';
+
+
+
+interface IState {
+  items: IBasicData[] | null
+  userItems: IBasicData[] | null
+  isLoadingItems: boolean
+  isLoadingUserItems: boolean
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+const itemsApi = new ItemsApi()
+const userItemsApi = new UserItemsApi()
+
+const state = reactive<IState>({
+  isLoadingItems: true,
+  isLoadingUserItems: true,
+  items: null,
+  userItems: null
+})
+
+onMounted(() => {
+  getItems()
+  getUserItems()
+})
+
+const getItems = async () => {
+  try {
+    state.isLoadingItems = true;
+    state.items = await itemsApi.getAll();
+    throw new Error()
+  } finally {
+    state.isLoadingItems = false
+  }
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+const getUserItems = async () => {
+  try {
+    state.isLoadingUserItems = true;
+    state.userItems = await userItemsApi.getAll();
+    throw new Error()
+  } finally {
+    state.isLoadingUserItems = false
   }
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
+</script>
 
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
+
+<style scoped lang="scss">
+.wrapper {
+  height: 100vh;
+  grid-template-columns: minmax(0, 1fr);
+  display: grid;
+  gap: 50px;
+  padding: 20px;
+
+  @include m.media-md() {
+    gap: 30px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 </style>

@@ -1,0 +1,9 @@
+@forward 'color';
+
+$font-family: 'Roboto', 'Arial', sans-serif;
+$main-font-size: 16;
+$border-radius: 5px;
+
+$transition-delay: 0.25s;
+$transition: $transition-delay ease;
+$A: $transition;
